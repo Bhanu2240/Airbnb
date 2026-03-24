@@ -19,7 +19,7 @@ Image Upload: Multer / Cloudinary
 ## Installation
 
 1. Clone the repository
-git clone https://github.com/your-username/airbnb-clone.git
+git clone https://github.com/Bhanu2240/Airbnb.git
 
 2. Go to project folder
 cd airbnb-clone

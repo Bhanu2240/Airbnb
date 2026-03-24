@@ -49,7 +49,23 @@ export const login = async (req, res) => {
     let { email, password } = req.body;
 
     let user = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      include: {
+        listing: {
+          select: {
+            id: true,
+            title: true,
+            image1: true,
+            image2: true,
+            image3: true,
+            description: true,
+            rent: true,
+            category: true,
+            city: true,
+            landmark: true
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -75,11 +91,11 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
-    // ✅ REMOVE password from response
     return res.status(200).json({
       id: user.id,
       name: user.name,
-      email: user.email
+      email: user.email,
+      listing: user.listing   // ✅ listings also sent
     });
 
   } catch (error) {
@@ -88,6 +104,7 @@ export const login = async (req, res) => {
     });
   }
 };
+
 export const logout = async (req,res)=>{
     try{
         res.clearCookie("token");

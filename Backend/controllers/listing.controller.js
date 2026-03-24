@@ -72,3 +72,80 @@ export const getListing = async (req, res) => {
     res.status(500).json({ message: `getListing error ${error}` });
   }
 };
+export const findListing = async (req, res) => {
+  try {
+    let { id } = req.params;
+
+    let listing = await prisma.listing.findUnique({
+      where: { id: Number(id) },   // ⚠️ id must be Number
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    return res.status(200).json(listing);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: `findListing error ${error}` });
+  }
+};
+export const updateListing = async (req, res) => {
+  try {
+    let { id } = req.params;
+    let { title, description, rent, city, landmark, category } = req.body;
+
+    let image1, image2, image3;
+
+    if (req.files.image1) {
+      let result1 = await uploadOnCloudinary(req.files.image1[0].path);
+      image1 = result1.secure_url;
+    }
+
+    if (req.files.image2) {
+      let result2 = await uploadOnCloudinary(req.files.image2[0].path);
+      image2 = result2.secure_url;
+    }
+
+    if (req.files.image3) {
+      let result3 = await uploadOnCloudinary(req.files.image3[0].path);
+      image3 = result3.secure_url;
+    }
+
+    let listing = await prisma.listing.update({
+      where: { id: Number(id) },
+      data: {
+        title,
+        description,
+        rent: Number(rent),
+        city,
+        landmark,
+        category,
+        image1,
+        image2,
+        image3,
+      },
+    });
+
+    res.status(200).json({
+      message: "Listing updated",
+      listing,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Update failed",
+    });
+  }
+};

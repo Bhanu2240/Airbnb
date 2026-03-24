@@ -20,9 +20,11 @@ const ListingContext = ({ children }) => {
   let [category, setCategory] = useState("");
   let [adding, setAdding] = useState(false);
   let [listingData, setListingData] = useState([]);
-   let [newlistData, setNewListData] = useState([]);
+  let [newlistData, setNewListData] = useState([]);
+  let [cardDetails, setCardDetais] = useState(null);
 
   let serverUrl = "http://localhost:8000";
+  let navigate=useNavigate()
 
   const handleAddListing = async () => {
     setAdding(true)
@@ -74,6 +76,18 @@ const ListingContext = ({ children }) => {
     alert("Error adding listing");
   }
 };
+  const handleViewCard = async(id)=>{
+    try{
+      let result=await axios.get(serverUrl + `/api/listing/findlistingbyid/${id}`,{withCredentials:true})
+       console.log(result.data)
+      setCardDetais(result.data)
+       navigate("/viewcard")
+    }catch(error){
+
+      console.log(error)
+
+    }
+  }
 
  const getListing=async()=>{
   try{
@@ -108,7 +122,9 @@ const ListingContext = ({ children }) => {
     adding,setAdding,
     listingData,setListingData,
     newlistData, setNewListData,
-    getListing
+    getListing,
+    handleViewCard,
+    cardDetails,setCardDetais
   };
 
   return (

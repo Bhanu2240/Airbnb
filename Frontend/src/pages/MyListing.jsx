@@ -1,16 +1,20 @@
-import React, { useContext } from 'react'
+import React, { useContext,useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { userDataContext } from '../Context/UserContext';
 import Card from '../Component/Card';
+import { ListingDataContext } from '../Context/ListingContext';
+
 
 export default function MyListing() {
     let navigate = useNavigate()
     let { userData } = useContext(userDataContext)
+    let { listingData } = useContext(ListingDataContext);
 
     if (!userData) {
         return <h1 className='mt-[100px] text-[25px]'>Loading...</h1>
     }
+   
 
     return (
         <div className='w-[100vw] min-h-[100vh] flex items-center justify-start flex-col gap-[50px] relative'>
@@ -23,7 +27,9 @@ export default function MyListing() {
             </div>
 
             <div className='w-[100%] h-[90%] flex items-center justify-center gap-[25px] flex-wrap mt-[30px]'>
-                {userData?.listing?.map((list) => (
+               {listingData
+  ?.filter((list) => list.userId === userData.id)
+  .map((list) => (
                     <Card
                         key={list.id}   // ✅ important
                         title={list.title}

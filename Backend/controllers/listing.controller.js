@@ -125,16 +125,16 @@ export const updateListing = async (req, res) => {
     let listing = await prisma.listing.update({
       where: { id: Number(id) },
       data: {
-        title,
-        description,
-        rent: Number(rent),
-        city,
-        landmark,
-        category,
-        image1,
-        image2,
-        image3,
-      },
+  title,
+  description,
+  rent: Number(rent),
+  city,
+  landmark,
+  category,
+  ...(image1 && { image1 }),
+  ...(image2 && { image2 }),
+  ...(image3 && { image3 }),
+}
     });
 
     res.status(200).json({
@@ -146,6 +146,25 @@ export const updateListing = async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: "Update failed",
+    });
+  }
+};
+export const deleteListing = async (req, res) => {
+  try {
+    let { id } = req.params;
+
+    await prisma.listing.delete({
+      where: { id: Number(id) }
+    });
+
+    res.status(200).json({
+      message: "Listing deleted successfully"
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Delete failed"
     });
   }
 };

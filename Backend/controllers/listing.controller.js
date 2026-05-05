@@ -125,16 +125,16 @@ export const updateListing = async (req, res) => {
     let listing = await prisma.listing.update({
       where: { id: Number(id) },
       data: {
-  title,
-  description,
-  rent: Number(rent),
-  city,
-  landmark,
-  category,
-  ...(image1 && { image1 }),
-  ...(image2 && { image2 }),
-  ...(image3 && { image3 }),
-}
+        title,
+        description,
+        rent: Number(rent),
+        city,
+        landmark,
+        category,
+        ...(image1 && { image1 }),
+        ...(image2 && { image2 }),
+        ...(image3 && { image3 }),
+      }
     });
 
     res.status(200).json({
@@ -166,5 +166,39 @@ export const deleteListing = async (req, res) => {
     res.status(500).json({
       message: "Delete failed"
     });
+  }
+};
+
+export const findListingBySearch = async (req, res) => {
+  try {
+    let { country, location, city } = req.query;
+    
+    // Use whatever query parameter the frontend sent
+    let searchTerm = city || location || country;
+
+    let query = {};
+    if (searchTerm) {
+      query = {
+        OR: [
+          { city: { contains: searchTerm, mode: 'insensitive' } },
+          { country: { contains: searchTerm, mode: 'insensitive' } },
+          { category: { contains: searchTerm, mode: 'insensitive' } },
+          { title: { contains: searchTerm, mode: 'insensitive' } },
+          { landmark: { contains: searchTerm, mode: 'insensitive' } }
+        ]
+      };
+    }
+
+    let listings = await prisma.listing.findMany({
+      where: query,
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+
+    res.status(200).json(listings);
+  } catch (error) {
+    console.log("findListingBySearch error:", error);
+    res.status(500).json({ message: "Search failed" });
   }
 };

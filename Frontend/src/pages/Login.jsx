@@ -34,7 +34,12 @@ export default function Login() {
             console.log(result)
         }catch(error){
           setLoading(false)
-            console.error("Error occurred while signing up:", error)
+            console.error("Error occurred while logging in:", error)
+            if (error.response && error.response.data) {
+                alert(error.response.data.message);
+            } else {
+                alert("Network Error: Could not reach the server.");
+            }
         }
     }
 

@@ -10,6 +10,9 @@ import { userDataContext } from './Context/UserContext'
 import './App.css'
 import MyListing from './pages/MyListing'
 import ViewCard from './pages/ViewCard'
+import { Toaster } from 'react-hot-toast'
+import MyTrips from './pages/MyTrips'
+import MyReservations from './pages/MyReservations'
 
 function App() {
   let { userData } = useContext(userDataContext)
@@ -20,7 +23,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
-        
+
         <Route
           path='/listingpage1'
           element={userData != null ? <ListingPage1 /> : <Navigate to="/" />}
@@ -33,15 +36,24 @@ function App() {
           path='/listingpage3'
           element={userData != null ? <ListingPage3 /> : <Navigate to="/" />}
         />
-         <Route
+        <Route
           path='/mylisting'
           element={userData != null ? <MyListing /> : <Navigate to="/" />}
         />
         <Route
           path='/viewcard'
-          element={userData != null ? <ViewCard/> : <Navigate to="/" />}
+          element={userData != null ? <ViewCard /> : <Navigate to="/" />}
+        />
+        <Route
+          path='/trips'
+          element={userData != null ? <MyTrips /> : <Navigate to="/" />}
+        />
+        <Route
+          path='/reservations'
+          element={userData != null ? <MyReservations /> : <Navigate to="/" />}
         />
       </Routes>
+      <Toaster position="top-center" />
     </>
   )
 }

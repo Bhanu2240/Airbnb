@@ -24,87 +24,87 @@ const ListingContext = ({ children }) => {
   let [cardDetails, setCardDetais] = useState(null);
 
   let serverUrl = "http://localhost:8000";
-  let navigate=useNavigate()
+  let navigate = useNavigate()
 
   const handleAddListing = async () => {
     setAdding(true)
-  try {
-    if (!title || !description || !rent || !city || !category) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    let formData = new FormData();
-    formData.append("title", title);
-    if (backEndImage1) formData.append("image1", backEndImage1);
-    if (backEndImage2) formData.append("image2", backEndImage2);
-    if (backEndImage3) formData.append("image3", backEndImage3);
-    formData.append("description", description);
-    formData.append("rent", rent);
-    formData.append("city", city);
-    formData.append("landmark", landmark);
-    formData.append("category", category);
-
-    let result = await axios.post(
-      serverUrl + "/api/listing/add",
-      formData,
-      {
-        withCredentials: true,
-       
+    try {
+      if (!title || !description || !rent || !city || !category) {
+        alert("Please fill all fields");
+        return;
       }
-    );
-     setAdding(false)
 
-    console.log(result);
-    alert("Listing Added Successfully");
-   
-    setTitle("")
-    setDescription("")
-    setFrontEndImage1(null)
-    setFrontEndImage2(null)
-    setFrontEndImage3(null)
-    setBackEndImage1(null)
-    setBackEndImage2(null)
-    setBackEndImage3(null)
-    setRent("")
-    setCity("")
-    setLandmark("")
-    setCategory("")
-  } catch (error) {
-     setAdding(false)
-    console.log(error);
-    alert("Error adding listing");
-  }
-};
-  const handleViewCard = async(id)=>{
-    try{
-      let result=await axios.get(serverUrl + `/api/listing/findlistingbyid/${id}`,{withCredentials:true})
-       console.log(result.data)
+      let formData = new FormData();
+      formData.append("title", title);
+      if (backEndImage1) formData.append("image1", backEndImage1);
+      if (backEndImage2) formData.append("image2", backEndImage2);
+      if (backEndImage3) formData.append("image3", backEndImage3);
+      formData.append("description", description);
+      formData.append("rent", rent);
+      formData.append("city", city);
+      formData.append("landmark", landmark);
+      formData.append("category", category);
+
+      let result = await axios.post(
+        serverUrl + "/api/listing/add",
+        formData,
+        {
+          withCredentials: true,
+
+        }
+      );
+      setAdding(false)
+
+      console.log(result);
+      alert("Listing Added Successfully");
+
+      setTitle("")
+      setDescription("")
+      setFrontEndImage1(null)
+      setFrontEndImage2(null)
+      setFrontEndImage3(null)
+      setBackEndImage1(null)
+      setBackEndImage2(null)
+      setBackEndImage3(null)
+      setRent("")
+      setCity("")
+      setLandmark("")
+      setCategory("")
+    } catch (error) {
+      setAdding(false)
+      console.log(error);
+      alert("Error adding listing");
+    }
+  };
+  const handleViewCard = async (id) => {
+    try {
+      let result = await axios.get(serverUrl + `/api/listing/findlistingbyid/${id}`, { withCredentials: true })
+      console.log(result.data)
       setCardDetais(result.data)
-       navigate("/viewcard")
-    }catch(error){
+      navigate("/viewcard")
+    } catch (error) {
 
       console.log(error)
 
     }
   }
 
- const getListing=async()=>{
-  try{
-    let result = await axios.get(serverUrl+ "/api/listing/get",{withCredentials:true})
-    setListingData(result.data)
-    setNewListData(result.data)
-   
-  }catch(error){
-    console.log(error)
+  const getListing = async () => {
+    try {
+      let result = await axios.get(serverUrl + "/api/listing/get", { withCredentials: true })
+      setListingData(result.data)
+      setNewListData(result.data)
 
+    } catch (error) {
+      console.log(error)
+
+    }
   }
- }
- useEffect(()=>{
-  getListing()
+  useEffect(() => {
+    getListing()
 
- },[])
- 
+  }, [])
+
   let value = {
     title, setTitle,
     description, setDescription,
@@ -119,12 +119,12 @@ const ListingContext = ({ children }) => {
     landmark, setLandmark,
     category, setCategory,
     handleAddListing,
-    adding,setAdding,
-    listingData,setListingData,
+    adding, setAdding,
+    listingData, setListingData,
     newlistData, setNewListData,
     getListing,
     handleViewCard,
-    cardDetails,setCardDetais
+    cardDetails, setCardDetais
   };
 
   return (

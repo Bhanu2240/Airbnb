@@ -8,13 +8,13 @@ import UserContext from './Context/UserContext.jsx'
 import ListingContext from './Context/ListingContext.jsx'
 
 createRoot(document.getElementById('root')).render(
- <BrowserRouter>
- <AuthContext>
-  <UserContext>
-    <ListingContext>
-    <App />
-    </ListingContext>
-  </UserContext>
+  <BrowserRouter>
+    <AuthContext>
+      <UserContext>
+        <ListingContext>
+          <App />
+        </ListingContext>
+      </UserContext>
     </AuthContext>
   </BrowserRouter>
 )

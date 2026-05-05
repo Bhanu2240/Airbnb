@@ -1,11 +1,15 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import { ListingDataContext } from '../Context/ListingContext';
 import { userDataContext } from '../Context/UserContext';
 import { RxCross2 } from "react-icons/rx";
-
 import axios from "axios";
+import { DateRange } from 'react-date-range';
+import 'react-date-range/dist/styles.css'; 
+import 'react-date-range/dist/theme/default.css'; 
+import { differenceInDays } from 'date-fns';
+import toast from 'react-hot-toast';
 
 const serverUrl = "http://localhost:8000"; // change if needed
 
@@ -26,6 +30,41 @@ const ViewCard = () => {
   let [backEndImage1, setBackEndImage1] = useState(null);
   let [backEndImage2, setBackEndImage2] = useState(null);
   let [backEndImage3, setBackEndImage3] = useState(null);
+
+  const [dateRange, setDateRange] = useState([{
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection'
+  }]);
+
+  const [dayCount, setDayCount] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(cardDetails.rent);
+
+  useEffect(() => {
+    let days = differenceInDays(dateRange[0].endDate, dateRange[0].startDate);
+    const count = days <= 0 ? 1 : days;
+    setDayCount(count);
+    setTotalPrice(count * cardDetails?.rent);
+  }, [dateRange, cardDetails]);
+
+  const handleReserve = async () => {
+    try {
+      const { startDate, endDate } = dateRange[0];
+      const res = await axios.post(`${serverUrl}/api/booking`, {
+        listingId: cardDetails.id,
+        startDate,
+        endDate,
+        totalPrice
+      }, { withCredentials: true });
+      
+      if(res.data.success) {
+        toast.success(res.data.message || "Booking successful!");
+        navigate('/mylisting'); // Let's temporarily navigate here or create MyTrips
+      }
+    } catch(err) {
+      toast.error(err.response?.data?.message || "Failed to make a booking.");
+    }
+  };
 
   const handleUpdateListing = async (e) => {
   e.preventDefault();
@@ -135,8 +174,8 @@ const handleDelete = async () => {
         {`₹ ${cardDetails?.rent} / day`}
       </div>
 
-      {/* Button */}
-      <div className='w-[95%] h-[50px] flex items-center justify-start px-[110px]'>
+      {/* Button and Calendar */}
+      <div className='w-[95%] min-h-[50px] flex items-start justify-start px-[11px] md:px-[110px] pb-10'>
        {cardDetails.userId == userData.id ? (
   <div className='flex gap-[20px]'>
     <button
@@ -154,9 +193,29 @@ const handleDelete = async () => {
     </button>
   </div>
 ) : (
-  <button className='px-[30px] py-[10px] bg-red-500 text-white text-[18px] rounded-lg'>
-    Reserve
-  </button>
+  <div className="flex flex-col gap-4 mt-6">
+    <h2 className="text-xl font-bold">Select Dates</h2>
+    <div className="border rounded-xl p-2 md:p-4 inline-block bg-white shadow-sm overflow-hidden flex-col">
+      <DateRange
+        ranges={dateRange}
+        onChange={item => setDateRange([item.selection])}
+        minDate={new Date()}
+        rangeColors={['#ef4444']}
+        className="w-full"
+      />
+    </div>
+    
+    <div className="text-xl font-semibold mt-4">
+      Total Price: ₹ {totalPrice} ({dayCount} {dayCount > 1 ? 'days' : 'day'})
+    </div>
+
+    <button 
+      onClick={handleReserve}
+      className='px-[30px] py-[15px] bg-red-500 hover:bg-red-600 transition-all text-white text-[18px] font-bold rounded-lg w-full md:w-[250px]'
+    >
+      Reserve
+    </button>
+  </div>
 )}
       </div>
 

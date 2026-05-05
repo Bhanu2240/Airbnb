@@ -36,6 +36,7 @@ model Listing {
 
   rent        Int
   city        String
+  country     String?
   landmark    String
   category    String
   isBooked    Boolean  @default(false)
@@ -58,6 +59,9 @@ model Booking {
   listingId Int
   listing   Listing @relation(fields: [listingId], references: [id])
 
+  startDate DateTime
+  endDate   DateTime
+  totalPrice Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
